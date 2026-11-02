@@ -1,0 +1,9 @@
+.env
+models/
+generated_images/
+.git/
+.gitignore
+__pycache__/
+*.pyc
+README.md
+docker-compose.yaml

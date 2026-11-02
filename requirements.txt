@@ -1,0 +1,19 @@
+# torch is pinned to the version preinstalled in the Dockerfile (cu128 layer),
+# so `pip install -r` never re-resolves or re-downloads the CUDA stack.
+# Host installs get the matching PyPI build of the same version.
+torch==2.11.0
+# FLUX.3 Image Klein ships as a modular pipeline; Flux3 support is not in a
+# released diffusers version yet, so track git main. diffusers main metadata
+# declares python_requires>=3.11 although the code still runs on 3.10
+# (verified); the Dockerfile passes --ignore-requires-python for this file.
+git+https://github.com/huggingface/diffusers.git
+transformers
+accelerate
+sentencepiece
+protobuf
+numpy<2.0
+opencv-python
+Pillow
+huggingface_hub
+# cv_bridge is provided by the system ROS 2 install (apt: ros-$ROS_DISTRO-cv-bridge),
+# not by an official PyPI package; there is only an unofficial ROS 1 stub on PyPI.

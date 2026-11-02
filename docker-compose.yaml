@@ -1,0 +1,49 @@
+services:
+  bob_flux3k:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ROS_DISTRO: humble
+    container_name: bob_flux3k
+    network_mode: host
+    ipc: host
+    pid: host
+    user: "${FLUX3K_UID:-1000}:${FLUX3K_GID:-1000}"
+    environment:
+      - HOME=/tmp
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-55}
+      - FLUX3K_REPO_ID=${FLUX3K_REPO_ID:-black-forest-labs/flux-3-image-klein}
+      - FLUX3K_MODEL_DIR=/app/models
+      - FLUX3K_DEVICE=${FLUX3K_DEVICE:-cuda:0}
+      - FLUX3K_PROMPT=${FLUX3K_PROMPT:-}
+      - FLUX3K_INPUT_IMAGE=${FLUX3K_INPUT_IMAGE:-}
+      - FLUX3K_ONCE=${FLUX3K_ONCE:-false}
+      - FLUX3K_IMAGE_PATH=${FLUX3K_IMAGE_PATH:-/app/generated_images/auto}
+      - FLUX3K_SEED=${FLUX3K_SEED:--1}
+      - FLUX3K_IMAGE_COUNTER_START=${FLUX3K_IMAGE_COUNTER_START:-1}
+      - FLUX3K_HEIGHT=${FLUX3K_HEIGHT:-1024}
+      - FLUX3K_WIDTH=${FLUX3K_WIDTH:-1024}
+      - FLUX3K_NUM_STEPS=${FLUX3K_NUM_STEPS:-16}
+      - FLUX3K_GUIDANCE=${FLUX3K_GUIDANCE:-3.5}
+      - FLUX3K_NUM_IMAGES=${FLUX3K_NUM_IMAGES:-1}
+      - FLUX3K_FRAME_ID=${FLUX3K_FRAME_ID:-flux3k}
+      - FLUX3K_KEEP_LOADED=${FLUX3K_KEEP_LOADED:-false}
+      - FLUX3K_CPU_OFFLOAD=${FLUX3K_CPU_OFFLOAD:-true}
+      - FLUX3K_USE_UPSAMPLER=${FLUX3K_USE_UPSAMPLER:-false}
+      - HF_TOKEN=${HF_TOKEN:-}
+    volumes:
+      - ./models:/app/models
+      - ./generated_images:/app/generated_images
+      - ./ref_images:/app/ref_images
+      - ./config:/app/ros2_ws/src/bob_flux3k/config
+      - ./bob_flux3k:/app/ros2_ws/src/bob_flux3k/bob_flux3k
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    restart: unless-stopped
+    command: ["ros2", "run", "bob_flux3k", "tti", "--ros-args", "-r", "__ns:=/flux3k", "--params-file", "/app/ros2_ws/src/bob_flux3k/config/tti.yaml"]

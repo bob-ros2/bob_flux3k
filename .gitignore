@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+
+# ROS 2
+install/
+build/
+log/
+
+# Model weights and cache
+models/*
+!models/.gitkeep
+generated_images/*
+!generated_images/.gitkeep
+ref_images/*
+!ref_images/.gitkeep
+
+# Secrets
+.env
+
+# IDEs
+.vscode/
+.idea/
+.project
+.pydevproject
+.settings/
+.DS_Store
